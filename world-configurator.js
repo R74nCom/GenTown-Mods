@@ -19,6 +19,11 @@ const $world_configurator_opts = {
     chunkScales: {
         "5": "Larger chunks (1.25x)",
         "4": "Default (1x)"
+    },
+    waterLevels: {
+        ".5": "More water",
+        ".4": "Default",
+        ".3": "Less water"
     }
 }
 
@@ -108,6 +113,12 @@ function worldConfigurator__load(){
                 options: $world_configurator_opts.chunkScales,
                 default: "4"
             },
+            {
+                text: "Water level",
+                setting: "worldConfigurator__waterLevel",
+                options: $world_configurator_opts.waterLevels,
+                default: "0.4"
+            },
             { spacer: true },
             {
                 text: "Create a new world",
@@ -148,6 +159,10 @@ function worldConfigurator__load(){
             if (userSettings.worldConfigurator__chunkScale){
                 chunkSize = +userSettings.worldConfigurator__chunkScale;
                 $c.defaultChunkSize = chunkSize;
+            }
+            if (userSettings.worldConfigurator__waterLevel){
+                waterLevel = +userSettings.worldConfigurator__waterLevel;
+                $c.defaultWaterLevel = +userSettings.worldConfigurator__waterLevel;
             }
         }
     );
