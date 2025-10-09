@@ -21,9 +21,9 @@ const $world_configurator_opts = {
         "4": "Default (1x)"
     },
     waterLevels: {
-        ".5": "More water",
-        ".4": "Default",
-        ".3": "Less water"
+        "0.5": "More water",
+        "0.4": "Default",
+        "0.3": "Less water"
     }
 }
 
