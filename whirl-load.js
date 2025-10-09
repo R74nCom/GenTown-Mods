@@ -1,6 +1,7 @@
 const toolsInitializedEvent = new CustomEvent("tools-initialized", {bubbles: true});
 
 const $wt = {
+    __version__: {major: 1, minor: 0, patch: 0},
     modsLoaded: [],
     /**
      * Binds a function after the original function completes.

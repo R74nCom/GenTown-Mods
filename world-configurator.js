@@ -68,6 +68,12 @@ function worldConfigurator__load(){
     if ($wt.modsLoaded.includes(MOD_NAME)){
         return;
     }
+    console.log($wt.__version__)
+    console.log($wt.__version__.major != 1 || $wt.__version__.minor < 0)
+    if ($wt.__version__.major != 1 || $wt.__version__.minor < 0) {
+        $wt._mod_notice__update("World Configurator")
+        return;
+    }
     if (userSettings.worldConfigurator__haveOpenedBefore === undefined){
         userSettings.worldConfigurator__haveOpenedBefore = false;
     }
