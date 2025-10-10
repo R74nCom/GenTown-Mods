@@ -1,6 +1,13 @@
 // @ts-check
 
 /**
+ * @typedef ModMetadata
+ * @property {string} url
+ * @property {string} [prettyName]
+ * @property {string[]} [dependencies]
+ */
+
+/**
  * The mod containment and initialization system.
  */
 class ModContainer {
@@ -12,7 +19,7 @@ class ModContainer {
 
     /**
      * Holds metadata about mods, like dependencies and pretty names.
-     * @type {Record<string, {url: string, prettyName?: string, dependencies?: string[]}>}
+     * @type {Record<string, ModMetadata>}
      */
     modMetadata = {};
 
@@ -40,7 +47,7 @@ class ModContainer {
 
     /**
      * Loads mod metadata from a provided object.
-     * @param {Record<string, {prettyName?: string, dependencies?: string[]}>} metadata The metadata object.
+     * @param {Record<string, ModMetadata>} metadata The metadata object.
      */
     loadModMetadata(metadata) {
         this.modMetadata = {...this.modMetadata, ...metadata};
