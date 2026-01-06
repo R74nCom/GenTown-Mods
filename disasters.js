@@ -1,4 +1,4 @@
-// Disasters.js
+// disasters.js
 
 
 (function(){
@@ -1477,3 +1477,4 @@ if (proc.subtype === "solar_flare") {
   }
 
 })(); 
+
