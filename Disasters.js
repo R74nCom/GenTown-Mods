@@ -106,7 +106,7 @@
       if (!c) return;
       if (Array.isArray(c)) set[c[0]+","+c[1]] = true;
       else if (c.x !== undefined && c.y !== undefined) set[c.x + "," + c.y] = true;
-      else if (c[0] !== undefined && c[1] !== undefined) set[c[0] + "," + c[1] = true];
+      else if (c[0] !== undefined && c[1] !== undefined) set[c[0] + "," + c[1]] = true;
     });
     const towns = getAllTowns();
     return towns.filter(t => {
@@ -518,38 +518,59 @@
       return;
     }
 
-    // SOLAR FLARE: much bigger & more random; use chunk flags for effects
-    if (proc.subtype === "solar_flare") {
-      if (!proc._solar_initialized) {
-        const solarDays = clamp(proc.duration || randInt(30, 120), 20, 240);
-        proc._solar_days = solarDays;
-        if (Array.isArray(proc.chunks)) {
-          proc.chunks.forEach(c => {
-            const key = (c[0] + "," + c[1]);
-            const ch = planet && planet.chunks ? planet.chunks[key] : null;
-            if (ch) {
-              ch._solar_days = Math.max(ch._solar_days || 0, solarDays);
-              ch._solar_affected = true;
-            }
-          });
-        }
-        proc._solar_initialized = true;
-      }
-      if (typeof proc._solar_days === "number") proc._solar_days = Math.max(0, proc._solar_days - 1);
-      const affected = townsInChunksList(proc.chunks || []);
-      affected.forEach(tt => {
-        const severity = Math.min(0.5, 0.12 + (proc._solar_days ? (Math.random() * 0.28) : 0));
-        if (Math.random() < severity) adjustTownFoodSafely(tt, -1);
-        const ck = chunkKeyFromTown(tt);
-        if (ck) {
-          const key = ck;
-          const ch = planet && planet.chunks ? planet.chunks[key] : null;
-          if (ch) ch._solar_affected = true;
-        }
-      });
-      if (proc._solar_days === 0) proc._solar_finished = true;
-      return;
+// SOLAR FLARE: improved (hopefully)
+if (proc.subtype === "solar_flare") {
+  if (!proc._solar_initialized) {
+    const solarDays = clamp(proc.duration || randInt(30, 120), 20, 240);
+    proc._solar_days = solarDays;
+
+    // ★ EXPAND flare if engine spawned only 1 chunk
+    if (Array.isArray(proc.chunks) && proc.chunks.length <= 1) {
+      const base = proc.chunks[0] || [proc.x, proc.y];
+      const cx = base[0];
+      const cy = base[1];
+
+      // long, thin, jagged solar flare
+      const steps = randInt(60, 140);
+      const patchRadius = randInt(1, 3);
+      proc.chunks = buildSolarJagged(cx, cy, steps, patchRadius);
     }
+
+    // mark all affected chunks
+    proc.chunks.forEach(c => {
+      const key = c[0] + "," + c[1];
+      const ch = planet && planet.chunks ? planet.chunks[key] : null;
+      if (ch) {
+        ch._solar_days = Math.max(ch._solar_days || 0, solarDays);
+        ch._solar_affected = true;
+      }
+    });
+
+    proc._solar_initialized = true;
+  }
+
+  // daily decay
+  if (typeof proc._solar_days === "number") {
+    proc._solar_days = Math.max(0, proc._solar_days - 1);
+  }
+
+  // town effects
+  const affected = townsInChunksList(proc.chunks || []);
+  affected.forEach(tt => {
+    const severity = Math.min(0.5, 0.12 + Math.random() * 0.28);
+    if (Math.random() < severity) adjustTownFoodSafely(tt, -1);
+
+    const ck = chunkKeyFromTown(tt);
+    if (ck) {
+      const ch = planet && planet.chunks ? planet.chunks[ck] : null;
+      if (ch) ch._solar_affected = true;
+    }
+  });
+
+  if (proc._solar_days === 0) proc._solar_finished = true;
+  return;
+}
+
 
     // DROUGHT: large-area crop reduction; shrink slowly over time
     if (proc.subtype === "drought") {
