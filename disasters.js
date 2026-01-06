@@ -1015,7 +1015,7 @@ if (proc.subtype === "solar_flare") {
 
       sub["solar_flare"] = Object.assign(sub["solar_flare"] || {}, {
         location: "any",
-        radius: 0,
+        radius: 1,
         message: "[NAME] washes the world $.",
         messageDone: "[NAME] $ fades.",
         color: [255,220,120],
@@ -1477,5 +1477,6 @@ if (proc.subtype === "solar_flare") {
   }
 
 })(); 
+
 
 
